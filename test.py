@@ -11,7 +11,7 @@ data_root = '/data0/liumengmeng/data/'
 
 
 shutil.move('/home/liumengmeng/anaconda3','/data0/liumengmeng/')
-
+#shutil.copytree()
 
 
 
