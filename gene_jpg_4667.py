@@ -12,12 +12,11 @@ data_root = '/data0/liumengmeng/data/'
 # print(path)
 
 # fg = cv2.imread(data_root + "_a_src/COCO_train2014_000000001510.png",-1)
-ins = cv2.imread(data_root + "_a_ins/COCO_train2014_000000052270.png",-1)
-cv2.imwrite("ins_original.png",ins)
+# ins = cv2.imread(data_root + "_a_ins/COCO_train2014_000000052270.png",-1)
+# cv2.imwrite("ins_original.png",ins)
 # cv2.imwrite("fg_test.png",fg)
-#cv2.imshow('ins',ins)
 
-def get_dic(name_path):
+def get_dic(name_path):#把SOC中的instance name拆成字典并返回一个字典
     adic = {}
     with open(name_path) as f:
         a=[line.rstrip() for line in f]
@@ -31,8 +30,9 @@ def srcjpg_multi(src_path,name_path,new_path,dict_path):#remove different pics b
         ins_path = os.path.join(src_path, ins_item)
         txt_path = os.path.join(name_path,ins_item[:-4]+'.txt')
         ins = cv2.imread(ins_path)
-        ins_dic = get_dic(txt_path)
-        dic.update({ins_item[:-4] : ins_dic})
+        ins_dic = get_dic(txt_path)#得到此时的src对应的instance name 的字典
+        dic.update({ins_item[:-4] : ins_dic})#保存新字典，新的字典的格式{图片名：{字典}}
+        #生成对应4667张的原来的coco的jpg图
         if(len(ins_dic) == 1):
             shutil.copy(ins_path , new_path+'/'+ ins_item)
         else:
@@ -41,7 +41,7 @@ def srcjpg_multi(src_path,name_path,new_path,dict_path):#remove different pics b
     with open(dict_path,"w",encoding="utf-8") as f:
         f.write(json.dumps(dic))
 
-def get_new_dic(old_json_path,new_json_path):
+def get_new_dic(old_json_path,new_json_path):#生成新的len为4667的字典
     dicn={}
     with open(old_json_path,"r",encoding="utf-8") as f:
         dic = json.loads(f.readline())
@@ -56,7 +56,7 @@ def get_new_dic(old_json_path,new_json_path):
     print(len(dic), len(dicn))
     with open(new_json_path,"w",encoding="utf-8") as f:
         f.write(json.dumps(dicn))
-
+#---------------------------------------------------------------------------------------
 
 src_path = '/data0/liumengmeng/data/_a_src_jpg'
 name_path = '/data0/liumengmeng/data/_a_name'
