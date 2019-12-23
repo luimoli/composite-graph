@@ -33,3 +33,6 @@ c1 = F.softmax(c, dim=0)
 
 j = np.random.random((1,1))
 print(j)
+
+
+print("this is for test about the changes when u copy code to another folder")
