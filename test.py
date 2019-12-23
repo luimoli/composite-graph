@@ -1,4 +1,5 @@
 import os
+import math
 import cv2
 import numpy as np
 from PIL import Image
@@ -6,34 +7,75 @@ import random
 import json
 from random import randint
 import shutil
-data_root = '/data0/liumengmeng/data/'
+import math
+from skimage import transform,data
+# import torch
+data_root = '/data0/liumengmeng/datasets/data_CG/'
 
 #test-----------------------------------------------------------------
-fg = cv2.imread(data_root+"_a_src_full/COCO_train2014_000000000332.png",-1)
-bg = cv2.imread(data_root+"_a_dst/bing_bg_1_0105.jpg")
-ins = cv2.imread(data_root+"_a_ins/COCO_train2014_000000000853.png",-1)
-gt_4667 = cv2.imread(data_root+"_a_gt_full/COCO_train2014_000000000110_3.png",-1)
+fg = cv2.imread(data_root+"_a_src_full/COCO_train2014_000000011147.png",-1)
+bg = cv2.imread(data_root+"_a_dst/opencountry_natu979.jpg")
+# ins = cv2.imread(data_root+"_a_ins/COCO_train2014_000000000853.png",-1)
+gt_4667 = cv2.imread(data_root+"tmp/_a_gt_full/COCO_train2014_000000000110_3.png",-1)
+#----------------------------------------------------------------------------------
+# fg1 = cv2.resize(fg,(600,600))
+# bg1 = cv2.resize(bg,None,fx=1.5,fy=1.5, interpolation = cv2.INTER_CUBIC)
 
-#----------------cv2.imshow()-------------------------
-# # cv2.imshow('image',rotate(fg))
-# # cv2.waitKey(0)
-# # cv2.destroyAllWindows()   #cv2.destroyWindow(wname)
 
+
+# pliimg = Image.open(data_root+"_a_src_full/COCO_train2014_000000000332.png")
+# pliimg.save('1.png')
+# size=(256, 256)
+# pliimg = pliimg.resize(size).convert('RGB')
+# pliimg.save('2.jpg')
+
+# img = bg.copy()
+# equ = cv2.equalizeHist(img)
+# res = np.hstack((img,equ)) #stacking images side-by-side
+# cv2.imwrite('res.png',res)
+
+# data=np.array(hist,dtype='uint8')
+
+
+# # a=np.random.random((5,4,3))
+# a = np.random.randint(0,255,(10,10,3))
+# c = np.ones((5,5,3))
+
+# # print(a.astype(np.uint8).dtype)
+# # print(type(a.astype(np.uint8)[0][0][0]))
+
+# a = np.random.randint(1,4,(2,2,3))
+# print(a == 2)
+# print(np.argwhere(a == 3))
+
+
+# ==========================================================================
 # with open('test/test.txt','a') as f:
 #     f.write('\n'+'cococococcocco')
 # with open('test/test.txt') as f:
 #     a = [line.rstrip() for line in f]
 # print(a)
 
-a = [1,2,3,4]
-b = [1,3,4,6,7,8,]
-for i in a:
-    if i not in b:
-        print(i)
+# with open("a1.txt","r",encoding="utf-8") as f:
+#     data = json.loads(f.readline())
+#     print(data["COCO_conver"][0]["name"])
 
-#shutil.move('/home/liumengmeng/anaconda3','/data0/liumengmeng/')
-#shutil.copytree()
-#shutil.copy('/home/liumengmeng/DSS/old/results_50epoch_1e4/run-2/models/final.pth','/home/liumengmeng/DSS/DSS-pytorch/weights')
+# path = open("./test.txt", 'w')
+# for i in range(10):
+#     print(i,file=path)
+# ===========================================================================
+
+
+
+# cg_root = '/data0/liumengmeng/CG/'
+# with open('/data0/liumengmeng/CG/id/test_id.txt') as f:
+#     a = [line.rstrip() for line in f]
+# for i in a:
+#     shutil.copy(cg_root+'gt/'+ i + '.png', cg_root+'gt_test/')
+
+
+
+
 
 
 

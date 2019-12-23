@@ -5,11 +5,13 @@ from PIL import Image
 import random
 import shutil
 import json
+from utils.func import *
+from contrast.contrast import *
 
 def rotate(image):#旋转缩放一定角度
     (h, w) = image.shape[:2]
-    angle = random.randint(-8,8)
-    scale = random.uniform(0.6,0.9)
+    angle = random.randint(-10,10)
+    scale = random.uniform(0.95,1.2)
     center = (w / 2, h / 2)
     M = cv2.getRotationMatrix2D(center, angle, scale)
     rotated = cv2.warpAffine(image, M, (w, h)) #h and w 's position
@@ -76,15 +78,13 @@ def get_bnew1(f_rs,back,a,b,c,d,alpha_path,old_a_pth,ins_path,old_ins_path):#决
 
     #alpha_full = np.zeros(back.shape, dtype=back.dtype)
     old_alpha = cv2.imread(old_a_pth)#读入上一张完整图片的alpha图
-    old_ins = cv2.imread(old_ins_path)#读入上一张合成图的ins图
-    # old_alpha[a:b,c:d] += get_fnew_and_alpha(f_rs)[1]
-    # old_ins[a:b,c:d] += get_fnew_and_alpha(f_rs)[1]
+    # old_ins = cv2.imread(old_ins_path)#读入上一张合成图的ins图
     oa = old_alpha[a:b,c:d].copy()
-    oi = old_ins[a:b,c:d].copy()
+    # oi = old_ins[a:b,c:d].copy()
     old_alpha[a:b,c:d] = cv2.add(oa,get_fnew_and_alpha(f_rs)[1])
-    old_ins[a:b,c:d] = cv2.add(oi,get_fnew_and_alpha(f_rs)[1])
+    # old_ins[a:b,c:d] = cv2.add(oi,get_fnew_and_alpha(f_rs)[1])
     cv2.imwrite(alpha_path, old_alpha)
-    cv2.imwrite(ins_path,old_ins)
+    # cv2.imwrite(ins_path,old_ins)
     return b_new
 
 #--------剪切前景图让其合成到边缘------------------------------------------------
@@ -301,63 +301,120 @@ def batch1(src_path, dst_path, res_path, gt_path,gt_old_path,ins_path,ins_old_pa
         pin1(src_new,dst_new,al_set,old_a_path,ins_set,old_ins_path,res_set,flag)
         gene_dict_new1(img_item[:-4],json_full_path,old_dic_path,dic_set,num)
 
+def batch_contrast(src_path,src_list, dst_path, dst_list,res_path, gt_path,name_path,dict_path,name,flag):
+    for i in range(len(src_list)):
+        #choose font image---------------------------------------
+        img_path = os.path.join(src_path, src_list[i]+'.png')
+        img = cv2.imread(img_path,-1)
+        #choose to rotate or not
+        src_new = rotate(img)#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #src_new = img
 
+        #choose txt-----------------------------------------
+        #txt_path = os.path.join(name_path, img_item[:-4]+'.txt')
+        json_full_path = os.path.join(name_path, 'instance_json_new.txt')
+        #choose ins-----------------------------------------
+        # i_path = os.path.join(ins_path, img_item[:-4]+'.png')
+        # i_ = cv2.imread(i_path,-1)
+        #src_new,i_new = rotate(img,i_)#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        #choose back----------------------------------------
+        back_path = os.path.join(dst_path, dst_list[i]+'.jpg')
+        dst_new = cv2.imread(back_path,-1)
+        
+        #set all the write path-----------------------------
+        res_set_name = src_list[i]+'_'+ name
+        al_set = os.path.join(gt_path, res_set_name +'.png')#设定存储gt的完整路径和命名
+        dic_set = os.path.join(dict_path, res_set_name +'.txt')#设定存储dicts的完整路径和命名
+        res_set = os.path.join(res_path, res_set_name +'.jpg')
+        #ins_set = os.path.join(color_path, res_set_name +'.png')
+        #funcs-----------------------------------------------
+        pin(src_new,dst_new,al_set,res_set,flag)#存储合成图并存储了gt
+        #gene_dict(img_item, list1_[l_num] , txt_path , dic_set)
+        gene_dict_new(src_list[i] ,dst_list[i], json_full_path,dic_set)
+        # print('one finished!')
 
 #-----------------------------------------------------------------------------------------------
-# def makefolder(path):
-#     if os.path.exists(path):
-#         print(path + "  is existed")
-#     else:
-#         os.makedirs(path)
-#         print(path + "  is created!")
-#     #if not os.path.exists(config.save_fold): os.mkdir(config.save_fold)
-def makefolder(paths):
-    for path in paths:
-        if os.path.exists(path):
-            print(path + "  is existed")
-        else:
-            os.makedirs(path)
-            print(path + "  is created!")
-
-def makepath(n):
-    data_root = '/data0/liumengmeng/data/'
-    paths = []
-    paths.append(data_root + 'pic_res/'+ n +'/')
-    paths.append(data_root + 'pic_gt/'+ n + '/')
-    paths.append(data_root + 'pic_dic/' + n + '/')
-    paths.append(data_root +'pic_ins/' + n + '/')
-    return paths
 
 #---------------------------------------
-data_root = '/data0/liumengmeng/data/'
+data_root = '/data1/liumengmeng/data_CG/'
 #--------------------------------------
 
 #------------------------------------------------------------------------
 # #-------生成单个objec合成图--------------
-# n = 'd'#新的合成图要存放的文件夹
+# n = 'bx1'#新的合成图要存放的文件夹
 # name = n #新的合成图的命名
-# flag = 3
-# src_path = data_root + '_a_src_full/'
+# flag = 1
+# src_path = data_root + 'src_b/'
 # dst_path = data_root + '_a_dst/'
 # name_path = data_root + 'id/'
-# paths = makepath(n)
+# paths = makepath(n,data_root)
 # makefolder(paths)
 # # batch(src_path, dst_path, res_path, gt_path,name_path,dict_path,name,flag)
 # batch(src_path, dst_path, paths[0], paths[1],name_path,paths[2],name,flag)
-# #-----------------------------------------------------------------------
+#-----------------------------------------------------------------------
 
 #--------生成多个objec合成图------------------
-n = 'b4'#新的合成图要存放的文件夹
+# n = 'my2_s0_s0'#新的合成图要存放的文件夹
+# name = n #新的合成图的命名
+# m = 'my2_s0'#作为背景图的原来的合成图的文件夹
+# num = '3'#在json标注中是第几个物体
+# flag = 0
+# src_path = data_root + 'src_s/'
+# name_path = data_root + 'id/'
+# pm = makepath(m,data_root)
+# pn = makepath(n,data_root)
+# makefolder(pn)
+# batch1(src_path, pm[0], pn[0], pn[1],pm[1],pn[3],pm[3],name_path,pn[2],pm[2],name,num,flag)
+
+
+# #------------低对比度图------------------------------------------
+#object变形的中间图保存路径
+inter_path = data_root + 'test_inter/'
+#基本设置
+n = 'low_m3'#新的合成图要存放的文件夹
 name = n #新的合成图的命名
-m = 'b3'#作为背景图的原来的合成图的文件夹
-num = '4'#在json标注中是第几个物体
-flag = 2
-src_path = data_root + '_a_src_full/'
+flag = 3
+src_path = data_root + '_a_src_full/' 
+dst_path = data_root + '_a_dst/'
 name_path = data_root + 'id/'
-pm = makepath(m)
-pn = makepath(n)
-makefolder(pn)
-batch1(src_path, pm[0], pn[0], pn[1],pm[1],pn[3],pm[3],name_path,pn[2],pm[2],name,num,flag)
+paths_contra = makepath(n,data_root)
+makefolder(paths_contra)
+
+# def get_obj_list(flag):
+#     if flag == 'm':
+#         mid_txt = data_root + 'id/pixel_m.txt'
+#         src_list = txt2list(mid_txt)
+#     elif flag == 'b':
+#         big_txt = data_root + 'id/pixel_b.txt'
+#         src_list = txt2list(big_txt)
+#     else:
+#         print('wrong flag!')
+#     return src_list
+
+# def save_contrast_txt(dst_list,max_list, txtname):
+#     list2txt(dst_list, data_root+'id/contrast_'+ txtname + '_dst.txt')
+#     list2txt(max_list, data_root+'id/contrast_'+ txtname + '_max.txt')
+#     # list2txt(dst_list, data_root+'id/contrast_big_dst.txt')
+#     # list2txt(dst_list, data_root+'id/contrast_big_max.txt')
+
+# src_list = get_obj_list('m')
+# txtname = 'mid2287'
+# file1 = open(data_root+'id/contrast_'+ txtname + '_dst.txt', 'w')
+# file2 = open(data_root+'id/contrast_'+ txtname + '_max.txt', 'w')
+# dst_list,max_list = get_lowcontrast_list(src_path,src_list,inter_path,dst_path,file1,file2)
+# save_contrast_txt(dst_list,max_list,'mid_2287_byfunc')
+
+
+
+src_list = txt2list(data_root+'id/pixel_m.txt')
+dst_list = txt2list(data_root+'id/contrast_mid2287_dst.txt')
+batch_contrast(src_path, src_list, dst_path, dst_list, paths_contra[0], paths_contra[1],name_path,paths_contra[2],name,flag)
+
+
+
+
+
 
 
 
@@ -368,12 +425,3 @@ batch1(src_path, pm[0], pn[0], pn[1],pm[1],pn[3],pm[3],name_path,pn[2],pm[2],nam
 # bg = cv2.imread(data_root+"_a_dst/bing_bg_1_0105.jpg")
 # ins = cv2.imread(data_root+"_a_ins/COCO_train2014_000000000853.png",-1)
 # gt_4667 = cv2.imread(data_root+"_a_gt_full/COCO_train2014_000000000110_3.png",-1)
-
-# b,g,r = cv2.split(ins)
-# cv2.imwrite('./test_pics/single_channel_test.png',b)
-
-#检测原来的gt变形后是否会改变图片类型
-# f_new = resize(gt_4667,bg)
-# cv2.imwrite('./test_pics/f_new.png',f_new)
-# f_new1 = rotate(f_new)
-# cv2.imwrite('./test_pics/f_new1.png',f_new1)
