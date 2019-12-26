@@ -23,12 +23,6 @@ gt_4667 = cv2.imread(data_root+"tmp/_a_gt_full/COCO_train2014_000000000110_3.png
 
 
 
-# pliimg = Image.open(data_root+"_a_src_full/COCO_train2014_000000000332.png")
-# pliimg.save('1.png')
-# size=(256, 256)
-# pliimg = pliimg.resize(size).convert('RGB')
-# pliimg.save('2.jpg')
-
 # img = bg.copy()
 # equ = cv2.equalizeHist(img)
 # res = np.hstack((img,equ)) #stacking images side-by-side
