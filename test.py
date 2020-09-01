@@ -69,6 +69,16 @@ gt_4667 = cv2.imread(data_root+"tmp/_a_gt_full/COCO_train2014_000000000110_3.png
 
 
 
+trroot = '/data1/liumengmeng/DUTS-TR/output_DUTS-TR'
+trnew = '/data1/liumengmeng/DUTS-TR/gt'
+for item in os.listdir(trroot):
+    item_path = os.path.join(trroot,item)
+    item_new_path = os.path.join(trnew,item[:-8]+'.png')
+    shutil.copy(item_path,item_new_path)
+
+
+
+
 
 
 

@@ -29,7 +29,7 @@ def srcjpg_multi(src_path,name_path,new_path,dict_path):#remove different pics b
     for ins_item in os.listdir(src_path):
         ins_path = os.path.join(src_path, ins_item)
         txt_path = os.path.join(name_path,ins_item[:-4]+'.txt')
-        ins = cv2.imread(ins_path)
+        # ins = cv2.imread(ins_path)
         ins_dic = get_dic(txt_path)#得到此时的src对应的instance name 的字典
         dic.update({ins_item[:-4] : ins_dic})#保存新字典，新的字典的格式{图片名：{字典}}
         #生成对应4667张的原来的coco的jpg图
