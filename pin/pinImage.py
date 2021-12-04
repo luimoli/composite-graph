@@ -92,21 +92,6 @@ class PinImage:
 
         return b_new
 
-    def get_bnew1(self, f_rs,back,a,b,c,d,alpha_path,old_a_pth,ins_path,old_ins_path):
-        b_new = back[a:b,c:d]
-        b_new = b_new.astype(float)
-
-        #alpha_full = np.zeros(back.shape, dtype=back.dtype)
-        old_alpha = cv2.imread(old_a_pth)#read the last alpha img
-        # old_ins = cv2.imread(old_ins_path)#read the last cg's ins
-        oa = old_alpha[a:b,c:d].copy()
-        # oi = old_ins[a:b,c:d].copy()
-        old_alpha[a:b,c:d] = cv2.add(oa, self.get_fnew_and_alpha(f_rs)[1])
-        # old_ins[a:b,c:d] = cv2.add(oi,get_fnew_and_alpha(f_rs)[1])
-        cv2.imwrite(alpha_path, old_alpha)
-        # cv2.imwrite(ins_path,old_ins)
-        return b_new
-
     def conver(self, f_rs,b_new):
         """[merge the foreground and backgound.]
         Args:
@@ -213,32 +198,7 @@ class PinImage:
             method = 'center' if tmp < center_num else 'random'
             self.pin(src_new, dst_new, gt_path_set, resimg_path_set, method)
             tmp += 1
-            # gene_dict_new(img_item[:-4] ,bg_name_list[l_num],json_full_path,dic_set)
 
-
-
-def batch_contrast(src_path,src_list, dst_path, dst_list,res_path, gt_path,name):
-    for i in range(len(src_list)):
-        #choose font image---------------------------------------
-        img_path = os.path.join(src_path, src_list[i]+'.png')
-        img = cv2.imread(img_path,-1)
-        #choose to rotate or not
-        src_new = augmented(img)#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        #src_new = img
-
-        #choose back----------------------------------------
-        back_path = os.path.join(dst_path, dst_list[i]+'.jpg')
-        dst_new = cv2.imread(back_path,-1)
-        
-        #set all the write path-----------------------------
-        res_set_name = src_list[i]+'_'+ name
-        al_set = os.path.join(gt_path, res_set_name +'.png')#设定存储gt的完整路径和命名
-        # dic_set = os.path.join(dict_path, res_set_name +'.txt')#设定存储dicts的完整路径和命名
-        res_set = os.path.join(res_path, res_set_name +'.jpg')
-        #ins_set = os.path.join(color_path, res_set_name +'.png')
-        #funcs-----------------------------------------------
-        pin(src_new,dst_new,al_set,res_set,'random')
-        # gene_dict_new(src_list[i] ,dst_list[i], json_full_path,dic_set)
 
 
 
